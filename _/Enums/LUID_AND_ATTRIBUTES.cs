@@ -1,0 +1,6 @@
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
+public struct LUID_AND_ATTRIBUTES
+{
+    public LUID Luid;
+    public UInt32 Attributes;
+}
