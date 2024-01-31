@@ -25,7 +25,7 @@ public class IconExtractor
     //{
     //    if (file)
     //    {
-    //        if (!FS.ExistsFile(fileName))
+    //        if (!File.Exists(fileName))
     //        {
     //            return null;
     //        }
