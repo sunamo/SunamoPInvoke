@@ -32,7 +32,7 @@ public class IconExtractor
     //    }
     //    else
     //    {
-    //        if (!FS.ExistsDirectory(fileName))
+    //        if (!Directory.Exists(fileName))
     //        {
     //            return null;
     //        }
