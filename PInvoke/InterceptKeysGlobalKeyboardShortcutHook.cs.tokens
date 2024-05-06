@@ -1,0 +1,15 @@
+SunamoPInvoke
+PInvoke
+InterceptKeysGlobalKeyboardShortcutHook
+W32Base
+Keys
+LowLevelKeyboardProc
+IntPtr
+Zero
+Application
+W32
+ProcessModule
+MainModule
+ModuleName
+Action
+Marshal

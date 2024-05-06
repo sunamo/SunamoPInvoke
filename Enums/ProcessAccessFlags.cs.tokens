@@ -1,0 +1,17 @@
+SunamoPInvoke
+Enums
+Flags
+ProcessAccessFlags
+All
+Terminate
+CreateThread
+VirtualMemoryOperation
+VirtualMemoryRead
+VirtualMemoryWrite
+DuplicateHandle
+CreateProcess
+SetQuota
+SetInformation
+QueryInformation
+QueryLimitedInformation
+Synchronize
