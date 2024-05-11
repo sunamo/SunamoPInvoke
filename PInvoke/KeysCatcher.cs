@@ -1,4 +1,4 @@
-namespace SunamoPInvoke.PInvoke;
+namespace SunamoPInvoke;
 
 public class KeysCatcher
 {

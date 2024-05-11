@@ -1,4 +1,4 @@
-namespace SunamoPInvoke.Enums;
+namespace SunamoPInvoke;
 
 public enum TOKEN_TYPE
 {

@@ -1,4 +1,4 @@
-namespace SunamoPInvoke.Enums;
+namespace SunamoPInvoke;
 
 [StructLayout(LayoutKind.Sequential, Pack = 4)]
 public struct LUID_AND_ATTRIBUTES

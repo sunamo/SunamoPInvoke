@@ -1,4 +1,4 @@
-namespace SunamoPInvoke.PInvoke.ByDll;
+namespace SunamoPInvoke;
 
 public class User32
 {

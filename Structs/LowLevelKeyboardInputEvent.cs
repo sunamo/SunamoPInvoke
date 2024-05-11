@@ -1,4 +1,4 @@
-namespace SunamoPInvoke.Structs;
+namespace SunamoPInvoke;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct LowLevelKeyboardInputEvent
