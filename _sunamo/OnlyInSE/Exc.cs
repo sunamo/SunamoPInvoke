@@ -1,3 +1,5 @@
+
+namespace SunamoPInvoke;
 using System.Diagnostics;
 using System.Text;
 
