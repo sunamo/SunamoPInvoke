@@ -12,14 +12,6 @@ public struct SHFILEINFO
     public string szTypeName;
 };
 
-public enum FolderType
-{
-    Closed,
-    Open
-}
 
-public enum IconSize
-{
-    Large,
-    Small
-}
+
+
