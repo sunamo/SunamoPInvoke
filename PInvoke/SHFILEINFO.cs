@@ -11,7 +11,3 @@ public struct SHFILEINFO
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
     public string szTypeName;
 };
-
-
-
-
