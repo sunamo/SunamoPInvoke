@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke._sunamo.SunamoValues;
 
 
 

@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.Enums;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct LUID

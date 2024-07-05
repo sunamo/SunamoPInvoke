@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.PInvoke;
 
 public partial class W32 : W32Base
 {

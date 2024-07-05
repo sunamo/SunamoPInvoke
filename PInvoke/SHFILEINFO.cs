@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.PInvoke;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 public struct SHFILEINFO

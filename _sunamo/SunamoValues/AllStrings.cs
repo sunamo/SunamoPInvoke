@@ -1,5 +1,5 @@
 
-namespace SunamoPInvoke;
+namespace SunamoPInvoke._sunamo.SunamoValues;
 internal class AllStrings
 {
     internal const string dot = ".";

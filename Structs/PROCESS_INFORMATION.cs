@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.Structs;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct PROCESS_INFORMATION

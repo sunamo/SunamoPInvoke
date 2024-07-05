@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.PInvoke;
 
 //Based on https://gist.github.com/Stasonix
 public class GlobalKeyboardHook : W32Base, IDisposable

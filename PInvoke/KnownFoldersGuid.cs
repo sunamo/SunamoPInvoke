@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.PInvoke;
 
 public static class KnownFoldersGuid
 {

@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.Enums;
 
 [Flags]
 public enum ProcessAccessFlags : uint

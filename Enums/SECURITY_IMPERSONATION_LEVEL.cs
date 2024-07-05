@@ -1,4 +1,4 @@
-namespace SunamoPInvoke;
+namespace SunamoPInvoke.Enums;
 
 public enum SECURITY_IMPERSONATION_LEVEL
 {
