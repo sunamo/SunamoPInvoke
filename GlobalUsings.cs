@@ -11,7 +11,7 @@ global using SunamoPInvoke.Args;
 global using SunamoPInvoke.Enums;
 global using SunamoPInvoke.PInvoke;
 global using SunamoPInvoke.Structs;
-global using SunamoPInvoke._sunamo.SunamoValues;
+global using SunamoPInvoke;
 global using SunamoPInvoke._sunamo.SunamoExceptions;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Reflection;
