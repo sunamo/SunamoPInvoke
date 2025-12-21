@@ -1,6 +1,7 @@
+namespace SunamoPInvoke.PInvoke;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoPInvoke.PInvoke;
 public partial class W32 : W32Base
 {
     [DllImport("gdi32.dll", SetLastError = true)]
