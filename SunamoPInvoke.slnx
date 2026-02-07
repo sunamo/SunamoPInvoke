@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SunamoPInvoke.Tests\\SunamoPInvoke.Tests.csproj" />
+  <Project Path="RunnerPInvoke\\RunnerPInvoke.csproj" />
+  <Project Path="SunamoPInvoke\SunamoPInvoke.csproj" />
+</Solution>
