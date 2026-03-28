@@ -1,34 +1,40 @@
 namespace SunamoPInvoke.PInvoke;
 
+/// <summary>
+/// Provides clipboard-related utility methods using Windows API.
+/// </summary>
 public partial class W32
 {
-    public static Process ProcessHoldingClipboard()
+    /// <summary>
+    /// Retrieves the process that currently has the clipboard open.
+    /// </summary>
+    /// <returns>The process holding the clipboard, or null if no process has it open.</returns>
+    public static Process? ProcessHoldingClipboard()
     {
-        Process theProc = null;
+        Process? holdingProcess = null;
 
-        IntPtr hwnd = GetOpenClipboardWindow();
+        IntPtr windowHandle = GetOpenClipboardWindow();
 
-        if (hwnd != IntPtr.Zero)
+        if (windowHandle != IntPtr.Zero)
         {
-            uint processId;
-            uint threadId = GetWindowThreadProcessId(hwnd, out processId);
+            GetWindowThreadProcessId(windowHandle, out uint processId);
 
-            Process[] procs = Process.GetProcesses();
-            foreach (Process proc in procs)
+            Process[] processes = Process.GetProcesses();
+            foreach (Process process in processes)
             {
-                IntPtr handle = proc.MainWindowHandle;
+                IntPtr mainWindowHandle = process.MainWindowHandle;
 
-                if (handle == hwnd)
+                if (mainWindowHandle == windowHandle)
                 {
-                    theProc = proc;
+                    holdingProcess = process;
                 }
-                else if (processId == proc.Id)
+                else if (processId == process.Id)
                 {
-                    theProc = proc;
+                    holdingProcess = process;
                 }
             }
         }
 
-        return theProc;
+        return holdingProcess;
     }
 }

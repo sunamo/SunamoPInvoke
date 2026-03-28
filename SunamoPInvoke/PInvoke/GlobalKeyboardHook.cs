@@ -1,121 +1,154 @@
 namespace SunamoPInvoke.PInvoke;
 
-//Based on https://gist.github.com/Stasonix
+/// <summary>
+/// Provides a global keyboard hook for capturing keyboard events system-wide. Based on https://gist.github.com/Stasonix
+/// </summary>
 public class GlobalKeyboardHook : W32Base, IDisposable
 {
-    public event EventHandler<GlobalKeyboardHookEventArgs> KeyboardPressed;
+    /// <summary>
+    /// Occurs when a keyboard key is pressed or released.
+    /// </summary>
+    public event EventHandler<GlobalKeyboardHookEventArgs>? KeyboardPressed;
 
     /// <summary>
-    /// Nerozlišuje mezi velkými a malými písmeny
-    /// dokonce i když je zapnutý caps lock
+    /// Initializes a new instance of the <see cref="GlobalKeyboardHook"/> class.
+    /// Does not distinguish between uppercase and lowercase letters, even when caps lock is on.
     /// </summary>
-    /// <exception cref="Win32Exception"></exception>
+    /// <exception cref="Win32Exception">Thrown when the hook installation fails.</exception>
     public GlobalKeyboardHook()
     {
-        _windowsHookHandle = nint.Zero;
-        _user32LibraryHandle = nint.Zero;
-        _hookProc = new HookProc(LowLevelKeyboardProc2); // we must keep alive _hookProc, because GC is not aware about SetWindowsHookEx behaviour.
+        windowsHookHandle = nint.Zero;
+        user32LibraryHandle = nint.Zero;
+        hookProc = new HookProc(LowLevelKeyboardProc2);
 
-
-        _user32LibraryHandle = W32.LoadLibrary("User32");
-        if (_user32LibraryHandle == nint.Zero)
+        user32LibraryHandle = W32.LoadLibrary("User32");
+        if (user32LibraryHandle == nint.Zero)
         {
             int errorCode = Marshal.GetLastWin32Error();
             throw new Win32Exception(errorCode, $"Failed to load library 'User32.dll'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
         }
 
-        _windowsHookHandle = W32.SetWindowsHookEx(WH_KEYBOARD_LL, _hookProc, _user32LibraryHandle, 0);
-        if (_windowsHookHandle == nint.Zero)
+        windowsHookHandle = W32.SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, user32LibraryHandle, 0);
+        if (windowsHookHandle == nint.Zero)
         {
             int errorCode = Marshal.GetLastWin32Error();
             throw new Win32Exception(errorCode, $"Failed to adjust keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
         }
     }
 
-    protected virtual void Dispose(bool disposing)
+    /// <summary>
+    /// Releases the keyboard hook and frees the User32 library.
+    /// </summary>
+    /// <param name="isDisposing">True if called from Dispose, false if called from finalizer.</param>
+    protected virtual void Dispose(bool isDisposing)
     {
-        if (disposing)
+        if (isDisposing)
         {
-            // because we can unhook only in the same thread, not in garbage collector thread
-            if (_windowsHookHandle != nint.Zero)
+            if (windowsHookHandle != nint.Zero)
             {
-                if (!W32.UnhookWindowsHookEx(_windowsHookHandle))
+                if (!W32.UnhookWindowsHookEx(windowsHookHandle))
                 {
                     int errorCode = Marshal.GetLastWin32Error();
                     throw new Win32Exception(errorCode, $"Failed to remove keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
                 }
-                _windowsHookHandle = nint.Zero;
+                windowsHookHandle = nint.Zero;
 
-                // ReSharper disable once DelegateSubtraction
-                _hookProc -= LowLevelKeyboardProc2;
+                hookProc = null!;
             }
         }
 
-        if (_user32LibraryHandle != nint.Zero)
+        if (user32LibraryHandle != nint.Zero)
         {
-            if (!W32.FreeLibrary(_user32LibraryHandle)) // reduces reference to library by 1.
+            if (!W32.FreeLibrary(user32LibraryHandle))
             {
                 int errorCode = Marshal.GetLastWin32Error();
                 throw new Win32Exception(errorCode, $"Failed to unload library 'User32.dll'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
             }
-            _user32LibraryHandle = nint.Zero;
+            user32LibraryHandle = nint.Zero;
         }
     }
 
+    /// <summary>
+    /// Finalizer that releases unmanaged resources.
+    /// </summary>
     ~GlobalKeyboardHook()
     {
         Dispose(false);
     }
 
+    /// <summary>
+    /// Releases all resources used by the <see cref="GlobalKeyboardHook"/>.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    private nint _windowsHookHandle;
-    private nint _user32LibraryHandle;
-    private HookProc _hookProc;
+    private nint windowsHookHandle;
+    private nint user32LibraryHandle;
+    private HookProc hookProc;
 
+    /// <summary>
+    /// The identifier for low-level keyboard hook.
+    /// </summary>
     public const int WH_KEYBOARD_LL = 13;
-    //const int HC_ACTION = 0;
 
+    /// <summary>
+    /// Specifies the state of a keyboard key event.
+    /// </summary>
     public enum KeyboardState
     {
+        /// <summary>
+        /// A key was pressed.
+        /// </summary>
         KeyDown = 0x0100,
+        /// <summary>
+        /// A key was released.
+        /// </summary>
         KeyUp = 0x0101,
+        /// <summary>
+        /// A system key was pressed.
+        /// </summary>
         SysKeyDown = 0x0104,
+        /// <summary>
+        /// A system key was released.
+        /// </summary>
         SysKeyUp = 0x0105
     }
 
+    /// <summary>
+    /// Virtual key code for the Print Screen key.
+    /// </summary>
     public const int VkSnapshot = 0x2c;
-    //const int VkLwin = 0x5b;
-    //const int VkRwin = 0x5c;
-    //const int VkTab = 0x09;
-    //const int VkEscape = 0x18;
-    //const int VkControl = 0x11;
-    const int KfAltdown = 0x2000;
+
+    private const int KfAltdown = 0x2000;
+
+    /// <summary>
+    /// Low-level keyboard hook flag indicating Alt key is down.
+    /// </summary>
     public const int LlkhfAltdown = KfAltdown >> 8;
 
+    /// <summary>
+    /// Callback for the low-level keyboard hook procedure.
+    /// </summary>
+    /// <param name="nCode">The hook code passed to the hook procedure.</param>
+    /// <param name="wParam">The identifier of the keyboard message.</param>
+    /// <param name="lParam">A pointer to a LowLevelKeyboardInputEvent structure.</param>
+    /// <returns>A non-zero value to prevent the message from being passed to the target window.</returns>
     public nint LowLevelKeyboardProc2(int nCode, nint wParam, nint lParam)
     {
-        bool fEatKeyStroke = false;
-
-        var wparamTyped = wParam.ToInt32();
-        if (Enum.IsDefined(typeof(KeyboardState), wparamTyped))
+        var messageType = wParam.ToInt32();
+        if (Enum.IsDefined(typeof(KeyboardState), messageType))
         {
-            object o = Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
-            LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent)o;
+            LowLevelKeyboardInputEvent keyboardInputEvent = (LowLevelKeyboardInputEvent)Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent))!;
 
-            var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState)wparamTyped);
+            var eventArguments = new GlobalKeyboardHookEventArgs(keyboardInputEvent, (KeyboardState)messageType);
 
-            EventHandler<GlobalKeyboardHookEventArgs> handler = KeyboardPressed;
+            EventHandler<GlobalKeyboardHookEventArgs>? handler = KeyboardPressed;
             handler?.Invoke(this, eventArguments);
-
-            fEatKeyStroke = eventArguments.Handled;
         }
 
         return 1;
-        //return fEatKeyStroke ? (IntPtr)1 : W32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
     }
 }

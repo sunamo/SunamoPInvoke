@@ -1,5 +1,8 @@
 namespace SunamoPInvoke.PInvoke;
 
+/// <summary>
+/// Provides wrapper methods for Windows shell file operations such as sending files to the recycle bin.
+/// </summary>
 public class FileOperationAPIWrapper
 {
     /// <summary>
@@ -9,15 +12,15 @@ public class FileOperationAPIWrapper
     public enum FileOperationFlags : ushort
     {
         /// <summary>
-        /// Do not show a dialog during the process
+        /// Do not show a dialog during the process.
         /// </summary>
         FOF_SILENT = 0x0004,
         /// <summary>
-        /// Do not ask the user to confirm selection
+        /// Do not ask the user to confirm selection.
         /// </summary>
         FOF_NOCONFIRMATION = 0x0010,
         /// <summary>
-        /// Delete the file to the recycle bin.  (Required flag to send a file to the bin
+        /// Delete the file to the recycle bin. Required flag to send a file to the bin.
         /// </summary>
         FOF_ALLOWUNDO = 0x0040,
         /// <summary>
@@ -25,7 +28,7 @@ public class FileOperationAPIWrapper
         /// </summary>
         FOF_SIMPLEPROGRESS = 0x0100,
         /// <summary>
-        /// Surpress errors, if any occur during the process.
+        /// Suppress errors, if any occur during the process.
         /// </summary>
         FOF_NOERRORUI = 0x0400,
         /// <summary>
@@ -36,37 +39,34 @@ public class FileOperationAPIWrapper
     }
 
     /// <summary>
-    /// File Operation Function Type for SHFileOperation
+    /// File operation function type for SHFileOperation.
     /// </summary>
     public enum FileOperationType : uint
     {
         /// <summary>
-        /// Move the objects
+        /// Move the objects.
         /// </summary>
         FO_MOVE = 0x0001,
         /// <summary>
-        /// Copy the objects
+        /// Copy the objects.
         /// </summary>
         FO_COPY = 0x0002,
         /// <summary>
-        /// Delete (or recycle) the objects
+        /// Delete (or recycle) the objects.
         /// </summary>
         FO_DELETE = 0x0003,
         /// <summary>
-        /// Rename the object(s)
+        /// Rename the object(s).
         /// </summary>
         FO_RENAME = 0x0004,
     }
 
-
-
     /// <summary>
-    /// SHFILEOPSTRUCT for SHFileOperation from COM
+    /// SHFILEOPSTRUCT for SHFileOperation from COM.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     private struct SHFILEOPSTRUCT
     {
-
         public nint hwnd;
         [MarshalAs(UnmanagedType.U4)]
         public FileOperationType wFunc;
@@ -83,67 +83,76 @@ public class FileOperationAPIWrapper
     private static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
 
     /// <summary>
-    /// Send file to recycle bin
+    /// Sends a file or directory to the recycle bin with specified flags.
     /// </summary>
-    /// <param name="path">Location of directory or file to recycle</param>
-    /// <param name="flags">FileOperationFlags to add in addition to FOF_ALLOWUNDO</param>
+    /// <param name="path">Location of directory or file to recycle.</param>
+    /// <param name="flags">FileOperationFlags to add in addition to FOF_ALLOWUNDO.</param>
+    /// <returns>True if the operation succeeded, false otherwise.</returns>
     public static bool Send(string path, FileOperationFlags flags)
     {
         try
         {
-            var fs = new SHFILEOPSTRUCT
+            var fileOperation = new SHFILEOPSTRUCT
             {
                 wFunc = FileOperationType.FO_DELETE,
                 pFrom = path + '\0' + '\0',
                 fFlags = FileOperationFlags.FOF_ALLOWUNDO | flags
             };
-            SHFileOperation(ref fs);
+            SHFileOperation(ref fileOperation);
             return true;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            Console.WriteLine(exception.Message);
             return false;
         }
     }
 
     /// <summary>
-    /// Send file to recycle bin.  Display dialog, display warning if files are too big to fit (FOF_WANTNUKEWARNING)
+    /// Sends a file to the recycle bin. Displays dialog and warning if files are too big to fit (FOF_WANTNUKEWARNING).
     /// </summary>
-    /// <param name="path">Location of directory or file to recycle</param>
+    /// <param name="path">Location of directory or file to recycle.</param>
+    /// <returns>True if the operation succeeded, false otherwise.</returns>
     public static bool Send(string path)
     {
         return Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_WANTNUKEWARNING);
     }
 
     /// <summary>
-    /// Send file silently to recycle bin.  Surpress dialog, surpress errors, delete if too large.
+    /// Sends a file silently to the recycle bin. Suppresses dialog, suppresses errors, deletes if too large.
     /// </summary>
-    /// <param name="path">Location of directory or file to recycle</param>
+    /// <param name="path">Location of directory or file to recycle.</param>
+    /// <returns>True if the operation succeeded, false otherwise.</returns>
     public static bool MoveToRecycleBin(string path)
     {
         return Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI | FileOperationFlags.FOF_SILENT);
-
     }
 
     private static bool deleteFile(string path, FileOperationFlags flags)
     {
         try
         {
-            var fs = new SHFILEOPSTRUCT
+            var fileOperation = new SHFILEOPSTRUCT
             {
                 wFunc = FileOperationType.FO_DELETE,
                 pFrom = path + '\0' + '\0',
                 fFlags = flags
             };
-            SHFileOperation(ref fs);
+            SHFileOperation(ref fileOperation);
             return true;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            Console.WriteLine(exception.Message);
             return false;
         }
     }
 
+    /// <summary>
+    /// Permanently deletes a file or directory silently without sending to the recycle bin.
+    /// </summary>
+    /// <param name="path">Location of directory or file to delete.</param>
+    /// <returns>True if the operation succeeded, false otherwise.</returns>
     public static bool DeleteCompletelySilent(string path)
     {
         return deleteFile(path,

@@ -1,5 +1,8 @@
 namespace SunamoPInvoke.Structs;
 
+/// <summary>
+/// Contains the data associated with a low-level keyboard input event.
+/// </summary>
 public struct LowLevelKeyboardInputEvent
 {
     /// <summary>
@@ -8,7 +11,7 @@ public struct LowLevelKeyboardInputEvent
     public int VirtualCode;
 
     /// <summary>
-    /// A hardware scan code for the key. 
+    /// A hardware scan code for the key.
     /// </summary>
     public int HardwareScanCode;
 
@@ -23,7 +26,7 @@ public struct LowLevelKeyboardInputEvent
     public int TimeStamp;
 
     /// <summary>
-    /// Additional information associated with the message. 
+    /// Additional information associated with the message.
     /// </summary>
     public nint AdditionalInformation;
 }
