@@ -17,19 +17,19 @@ public class GlobalKeyboardHook : W32Base, IDisposable
     /// <exception cref="Win32Exception">Thrown when the hook installation fails.</exception>
     public GlobalKeyboardHook()
     {
-        windowsHookHandle = nint.Zero;
-        user32LibraryHandle = nint.Zero;
+        windowsHookHandle = 0;
+        user32LibraryHandle = 0;
         hookProc = new HookProc(LowLevelKeyboardProc2);
 
         user32LibraryHandle = W32.LoadLibrary("User32");
-        if (user32LibraryHandle == nint.Zero)
+        if (user32LibraryHandle == 0)
         {
             int errorCode = Marshal.GetLastWin32Error();
             throw new Win32Exception(errorCode, $"Failed to load library 'User32.dll'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
         }
 
         windowsHookHandle = W32.SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, user32LibraryHandle, 0);
-        if (windowsHookHandle == nint.Zero)
+        if (windowsHookHandle == 0)
         {
             int errorCode = Marshal.GetLastWin32Error();
             throw new Win32Exception(errorCode, $"Failed to adjust keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
@@ -44,27 +44,27 @@ public class GlobalKeyboardHook : W32Base, IDisposable
     {
         if (isDisposing)
         {
-            if (windowsHookHandle != nint.Zero)
+            if (windowsHookHandle != 0)
             {
                 if (!W32.UnhookWindowsHookEx(windowsHookHandle))
                 {
                     int errorCode = Marshal.GetLastWin32Error();
                     throw new Win32Exception(errorCode, $"Failed to remove keyboard hooks for '{Process.GetCurrentProcess().ProcessName}'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
                 }
-                windowsHookHandle = nint.Zero;
+                windowsHookHandle = 0;
 
                 hookProc = null!;
             }
         }
 
-        if (user32LibraryHandle != nint.Zero)
+        if (user32LibraryHandle != 0)
         {
             if (!W32.FreeLibrary(user32LibraryHandle))
             {
                 int errorCode = Marshal.GetLastWin32Error();
                 throw new Win32Exception(errorCode, $"Failed to unload library 'User32.dll'. Error {errorCode}: {new Win32Exception(Marshal.GetLastWin32Error()).Message}.");
             }
-            user32LibraryHandle = nint.Zero;
+            user32LibraryHandle = 0;
         }
     }
 
@@ -138,7 +138,7 @@ public class GlobalKeyboardHook : W32Base, IDisposable
     /// <returns>A non-zero value to prevent the message from being passed to the target window.</returns>
     public nint LowLevelKeyboardProc2(int nCode, nint wParam, nint lParam)
     {
-        var messageType = wParam.ToInt32();
+        var messageType = (int)wParam;
         if (Enum.IsDefined(typeof(KeyboardState), messageType))
         {
             LowLevelKeyboardInputEvent keyboardInputEvent = (LowLevelKeyboardInputEvent)Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent))!;
