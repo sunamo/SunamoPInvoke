@@ -1,5 +1,10 @@
 # SunamoPInvoke
 
+## Short description
+
+Knihovna s obálkami P/Invoke pro rozhraní Windows API: globální klávesové háčky a další volání WinAPI z .NET. Obsahuje Runner a testy.
+
+
 P/Invoke wrapper library for Windows API (WinAPI) interop in .NET.
 
 ## Overview
