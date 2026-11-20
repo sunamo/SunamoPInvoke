@@ -1,9 +1,19 @@
 namespace SunamoPInvoke.PInvoke;
 
+/// <summary>
+/// Represents the global keyboard hook type.
+/// </summary>
 public class GlobalKeyboardHook : W32Base, IDisposable
 {
+    /// <summary>
+    /// The keyboard pressed.
+    /// </summary>
     public event EventHandler<GlobalKeyboardHookEventArgs>? KeyboardPressed;
 
+    /// <summary>
+    /// Global keyboard hook.
+    /// </summary>
+    /// <returns>The global keyboard hook result.</returns>
     public GlobalKeyboardHook()
     {
         windowsHookHandle = 0;
@@ -25,6 +35,11 @@ public class GlobalKeyboardHook : W32Base, IDisposable
         }
     }
 
+    /// <summary>
+    /// Dispose.
+    /// </summary>
+    /// <param name="isDisposing">The is disposing.</param>
+    /// <returns>The dispose result.</returns>
     protected virtual void Dispose(bool isDisposing)
     {
         if (isDisposing)
@@ -53,11 +68,19 @@ public class GlobalKeyboardHook : W32Base, IDisposable
         }
     }
 
+    /// <summary>
+    /// Global keyboard hook.
+    /// </summary>
+    /// <returns>The global keyboard hook result.</returns>
     ~GlobalKeyboardHook()
     {
         Dispose(false);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the dispose class.
+    /// </summary>
+    /// <param name="false">The false.</param>
     public void Dispose()
     {
         Dispose(true);
@@ -68,22 +91,53 @@ public class GlobalKeyboardHook : W32Base, IDisposable
     private nint user32LibraryHandle;
     private HookProc hookProc;
 
+    /// <summary>
+    /// The WH KEYBOARD LL constant.
+    /// </summary>
     public const int WH_KEYBOARD_LL = 13;
 
+    /// <summary>
+    /// Represents the keyboard state type.
+    /// </summary>
     public enum KeyboardState
     {
+        /// <summary>
+        /// The key down value.
+        /// </summary>
         KeyDown = 0x0100,
+        /// <summary>
+        /// The key up value.
+        /// </summary>
         KeyUp = 0x0101,
+        /// <summary>
+        /// The sys key down value.
+        /// </summary>
         SysKeyDown = 0x0104,
+        /// <summary>
+        /// The sys key up value.
+        /// </summary>
         SysKeyUp = 0x0105
     }
 
+    /// <summary>
+    /// The vk snapshot constant.
+    /// </summary>
     public const int VkSnapshot = 0x2c;
 
     private const int KfAltdown = 0x2000;
 
+    /// <summary>
+    /// The llkhf altdown constant.
+    /// </summary>
     public const int LlkhfAltdown = KfAltdown >> 8;
 
+    /// <summary>
+    /// Low level keyboard proc 2.
+    /// </summary>
+    /// <param name="nCode">The n code.</param>
+    /// <param name="wParam">The w param.</param>
+    /// <param name="lParam">The l param.</param>
+    /// <returns>The low level keyboard proc 2 result.</returns>
     public nint LowLevelKeyboardProc2(int nCode, nint wParam, nint lParam)
     {
         var messageType = (int)wParam;
