@@ -141,7 +141,8 @@ public class GlobalKeyboardHook : W32Base, IDisposable
     public nint LowLevelKeyboardProc2(int nCode, nint wParam, nint lParam)
     {
         var messageType = (int)wParam;
-        if (Enum.IsDefined(typeof(KeyboardState), messageType))
+        // A negative code must be passed on untouched (Win32 contract of a hook procedure).
+        if (nCode >= 0 && Enum.IsDefined(typeof(KeyboardState), messageType))
         {
             LowLevelKeyboardInputEvent keyboardInputEvent = (LowLevelKeyboardInputEvent)Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent))!;
 
@@ -149,8 +150,12 @@ public class GlobalKeyboardHook : W32Base, IDisposable
 
             EventHandler<GlobalKeyboardHookEventArgs>? handler = KeyboardPressed;
             handler?.Invoke(this, eventArguments);
+
+            // Only a key that a handler marked as handled is swallowed; every other key continues to the rest of the system.
+            if (eventArguments.Handled)
+                return 1;
         }
 
-        return 1;
+        return W32.CallNextHookEx(windowsHookHandle, nCode, wParam, lParam);
     }
 }
