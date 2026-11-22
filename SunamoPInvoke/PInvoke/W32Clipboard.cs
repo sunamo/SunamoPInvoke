@@ -2,6 +2,10 @@ namespace SunamoPInvoke.PInvoke;
 
 public partial class W32
 {
+    /// <summary>
+    /// Process holding clipboard.
+    /// </summary>
+    /// <returns>The process holding clipboard result.</returns>
     public static Process? ProcessHoldingClipboard()
     {
         Process? holdingProcess = null;

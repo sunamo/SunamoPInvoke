@@ -66,3 +66,19 @@ dotnet add package SunamoPInvoke
 ## License
 
 MIT - See the repository root for license information.
+
+<!-- sunamo:test-coverage:start -->
+## Test coverage
+
+| Metric | Value |
+|---|---|
+| Method | static |
+| Test projects | 1 |
+| Public types referenced by tests | 0/26 (0.0 %) |
+| Public methods referenced by tests | 0/54 (0.0 %) |
+| Line coverage | n/a |
+| Branch coverage | n/a |
+| Generated (UTC) | 2026-11-22 21:24 |
+
+<!-- sunamo:test-coverage:data {"package":"SunamoPInvoke","container":"pinp","testProjects":1,"publicTypes":26,"typesReferencedByTests":0,"publicMethods":54,"methodsReferencedByTests":0,"lineRate":null,"branchRate":null,"method":"static","generatedUtc":"2026-11-22 21:24"} -->
+<!-- sunamo:test-coverage:end -->
